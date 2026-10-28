@@ -125,5 +125,45 @@ class RepositoryQualityTests(unittest.TestCase):
         self.assertIn("flat_grad_out_lora_b", source)
         self.assertIn("flat_lora_input", source)
 
+    def test_rms_norm_optional_weights_are_not_saved_as_none(self):
+        source = (ROOT / "q8_kernels" / "functional" / "rms_norm.py").read_text(
+            encoding="utf-8"
+        )
+        module = ast.parse(source)
+        rms_class = next(
+            node
+            for node in module.body
+            if isinstance(node, ast.ClassDef) and node.name == "RMSNorm8bit"
+        )
+        forward = next(
+            node
+            for node in rms_class.body
+            if isinstance(node, ast.FunctionDef) and node.name == "forward"
+        )
+        backward = next(
+            node
+            for node in rms_class.body
+            if isinstance(node, ast.FunctionDef) and node.name == "backward"
+        )
+
+        self.assertIn("ctx.has_weights", source)
+        save_calls = [
+            node
+            for node in ast.walk(forward)
+            if isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Attribute)
+            and node.func.attr == "save_for_backward"
+        ]
+        self.assertTrue(save_calls)
+        self.assertFalse(
+            any(
+                isinstance(argument, ast.Constant) and argument.value is None
+                for call in save_calls
+                for argument in call.args
+            )
+        )
+        self.assertIn("weights = None", source)
+        self.assertTrue(any(isinstance(node, ast.Return) for node in ast.walk(backward)))
+
 if __name__ == "__main__":
     unittest.main()
