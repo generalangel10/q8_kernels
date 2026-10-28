@@ -12,8 +12,10 @@ class RepositoryQualityTests(unittest.TestCase):
             ROOT / "CONTRIBUTING.md",
             ROOT / "SECURITY.md",
             ROOT / "CHANGELOG.md",
+            ROOT / "LICENSE",
             ROOT / "setup.py",
             ROOT / "q8_kernels" / "__init__.py",
+            ROOT / "q8_kernels" / "_version.py",
         )
         for path in expected:
             with self.subTest(path=path):
@@ -28,6 +30,11 @@ class RepositoryQualityTests(unittest.TestCase):
     def test_workflow_is_present(self):
         workflow = ROOT / ".github" / "workflows" / "repository-checks.yml"
         self.assertTrue(workflow.is_file())
+
+    def test_package_metadata_is_importable_without_cuda(self):
+        import q8_kernels
+
+        self.assertEqual(q8_kernels.__version__, "0.1.0")
 
 
 if __name__ == "__main__":

@@ -167,6 +167,8 @@ debug/
 logs.txt
 test_*.py
 attn_test.py
+!tests/
+!tests/test_repository_quality.py
 *.pt
 *.pth
 *.ipynb
