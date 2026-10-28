@@ -67,6 +67,63 @@ class RepositoryQualityTests(unittest.TestCase):
                 self.assertEqual(len(return_nodes), 1)
                 self.assertEqual(len(return_nodes[0].value.elts), expected_arity)
 
+    def test_lora_backward_has_safe_quantized_and_parameter_gradient_paths(self):
+        source = (ROOT / "q8_kernels" / "functional" / "linear.py").read_text(
+            encoding="utf-8"
+        )
+        module = ast.parse(source)
+        lora_class = next(
+            node
+            for node in module.body
+            if isinstance(node, ast.ClassDef) and node.name == "Q8LinearLora"
+        )
+        forward = next(
+            node
+            for node in lora_class.body
+            if isinstance(node, ast.FunctionDef) and node.name == "forward"
+        )
+        backward = next(
+            node
+            for node in lora_class.body
+            if isinstance(node, ast.FunctionDef) and node.name == "backward"
+        )
+
+        # INT8 inputs must have a defined activation passed to q8_mm(_bias).
+        self.assertIn("a_quant = a", source)
+
+        # Both backward branches must have the quantized output available.
+        grad_quantize = [
+            node
+            for node in ast.walk(backward)
+            if isinstance(node, ast.Assign)
+            and isinstance(node.value, ast.Call)
+            and isinstance(node.value.func, ast.Name)
+            and node.value.func.id == "quantize_fp8"
+        ]
+        self.assertTrue(grad_quantize)
+        self.assertIn("grad_output_fp8", source)
+
+        # Context storage must never include the old non-tensor None sentinel.
+        save_calls = [
+            node
+            for node in ast.walk(forward)
+            if isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Attribute)
+            and node.func.attr == "save_for_backward"
+        ]
+        self.assertTrue(save_calls)
+        self.assertFalse(
+            any(
+                isinstance(argument, ast.Constant) and argument.value is None
+                for call in save_calls
+                for argument in call.args
+            )
+        )
+
+        # Parameter gradients are reduced to their parameter shapes across
+        # arbitrary leading batch/sequence dimensions.
+        self.assertIn("flat_grad_out_lora_b", source)
+        self.assertIn("flat_lora_input", source)
 
 if __name__ == "__main__":
     unittest.main()
