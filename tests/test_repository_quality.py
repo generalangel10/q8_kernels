@@ -42,6 +42,7 @@ class RepositoryQualityTests(unittest.TestCase):
             ("q8_kernels/functional/fast_hadamard.py", "HadamardTransformFn"): 3,
             ("q8_kernels/functional/linear.py", "Q8LinearFunc"): 7,
             ("q8_kernels/functional/linear.py", "FP8LinearFunc"): 7,
+            ("q8_kernels/functional/rope.py", "ROPE"): 4,
         }
         for (relative_path, class_name), expected_arity in expected.items():
             with self.subTest(class_name=class_name):
@@ -66,6 +67,15 @@ class RepositoryQualityTests(unittest.TestCase):
                 ]
                 self.assertEqual(len(return_nodes), 1)
                 self.assertEqual(len(return_nodes[0].value.elts), expected_arity)
+
+    def test_rope_validates_both_frequency_tensors_against_input_shape(self):
+        source = (ROOT / "q8_kernels" / "functional" / "rope.py").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn(
+            "assert cos_freqs.shape == x.shape and sin_freqs.shape == x.shape",
+            source,
+        )
 
     def test_lora_backward_has_safe_quantized_and_parameter_gradient_paths(self):
         source = (ROOT / "q8_kernels" / "functional" / "linear.py").read_text(
