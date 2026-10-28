@@ -11,3 +11,5 @@ formal release tags; entries below describe changes on the development branch.
 - Added package version metadata and a canonical MIT license file.
 - Made package metadata importable on CPU-only machines without eagerly
   loading CUDA-backed subpackages.
+- Corrected gradient tuple arity for the Hadamard, Q8 linear, and FP8 linear
+  custom autograd functions.
