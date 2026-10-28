@@ -117,7 +117,6 @@ Thanks to:
 KONAKONA666
 ## License
 
-MIT
-**Free Software**
+MIT License; see [LICENSE](LICENSE).
 
 The bundled CUTLASS submodule retains its own upstream license and notices.

@@ -228,6 +228,7 @@ ext_modules.append(
 
 setup(
     name=PACKAGE_NAME,
+    version="0.1.0",
     packages=find_packages(
         exclude=(
             "build",
@@ -239,7 +240,8 @@ setup(
             "benchmarks",
         )
     ),
-    description="8bit kernels",
+    description="CUDA kernels and PyTorch modules for FP8/INT8 inference workloads",
+    license="MIT",
     ext_modules=ext_modules,
     entry_points={
         'console_scripts': [
@@ -256,8 +258,9 @@ setup(
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: BSD License",
-        "Operating System :: Unix",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: Microsoft :: Windows",
+        "Operating System :: POSIX :: Linux",
     ],
     author="KONAKONA666/Aibek Bekbayev",
     author_email="konakona666@proton.me",
