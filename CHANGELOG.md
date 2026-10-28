@@ -13,3 +13,8 @@ formal release tags; entries below describe changes on the development branch.
   loading CUDA-backed subpackages.
 - Corrected gradient tuple arity for the Hadamard, Q8 linear, and FP8 linear
   custom autograd functions.
+- Hardened the LoRA autograd path for INT8 activations, both hadamard branches,
+  and batched LoRA parameter gradients.
+- Made RMSNorm without affine weights safe for autograd context storage.
+- Corrected RoPE frequency-shape validation so cosine and sine tensors are
+  both checked against the input shape.
