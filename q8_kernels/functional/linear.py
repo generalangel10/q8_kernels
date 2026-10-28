@@ -50,7 +50,7 @@ class Q8LinearFunc(torch.autograd.Function):
         grad_output_fp8, grad_output_scales = quantize_fp8(grad_output)
         w_fp8, w_scales = quantize_fp8((b.to(ctx.out_dtype) * scale_b[:, None]).T)
         grad_x = hadamard_transform(fp8_mm(grad_output_fp8, w_fp8, grad_output_scales, w_scales, False, ctx.out_dtype))
-        return grad_x, None, None, None, None, None, None, None, None, None
+        return grad_x, None, None, None, None, None, None
 
 
 class Q8LinearLora(torch.autograd.Function):
@@ -175,7 +175,7 @@ class FP8LinearFunc(torch.autograd.Function):
         # if is_nan_after.item() and not is_nan_before.item():
         #     # print shape grad_out
         #     print(f"grad_output shape: {grad_output.shape}")
-        return grad_x, None, None, None, None, None, None, None, None
+        return grad_x, None, None, None, None, None, None
 
 
 def fp8_linear(a: torch.Tensor, b: torch.Tensor, bias: Optional[torch.Tensor]=None, 

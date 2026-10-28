@@ -18,7 +18,7 @@ class HadamardTransformFn(torch.autograd.Function):
     def backward(ctx, dout):
         # The Hadamard transform matrix is symmetric, so in the backward pass we multiply by its
         # transpose, which is itself.
-        return fast_hadamard_transform(dout, ctx._hadamard_transform_scale), None
+        return fast_hadamard_transform(dout, ctx._hadamard_transform_scale), None, None
 
 
 def hadamard_transform(x: torch.Tensor, scale: Optional[float] = None, out_type:Optional[torch.dtype]=None) -> torch.Tensor:
