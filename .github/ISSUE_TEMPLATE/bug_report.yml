@@ -1,0 +1,45 @@
+name: Bug report
+description: Report a reproducible correctness, build, or runtime problem.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please search existing issues first. Never include passwords, API keys, private model weights, or other secrets.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Describe the observed behaviour and the expected behaviour.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Include the smallest command or code sample that reproduces the issue.
+      render: python
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Include GPU, driver, CUDA, PyTorch, Python, OS, and commit or package version.
+      placeholder: |
+        GPU:
+        Driver:
+        CUDA:
+        PyTorch:
+        Python:
+        OS:
+        Commit/package:
+    validations:
+      required: true
+  - type: textarea
+    id: traceback
+    attributes:
+      label: Traceback or logs
+      render: text
