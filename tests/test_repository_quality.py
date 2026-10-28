@@ -125,6 +125,5 @@ class RepositoryQualityTests(unittest.TestCase):
         self.assertIn("flat_grad_out_lora_b", source)
         self.assertIn("flat_lora_input", source)
 
-
 if __name__ == "__main__":
     unittest.main()
